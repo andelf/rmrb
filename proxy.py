@@ -36,8 +36,7 @@ def timing(func, *args, **kwargs):
     return (elapsed, ret)
 
 async def fetch_proxy_list(queue):
-    print('???')
-    urls = ["https://www.kuaidaili.com/free/inha/%s/" % p for p in range(1, 20)]
+    urls = ["https://www.kuaidaili.com/free/inha/%s/" % p for p in range(1, 60)]
     pattern = re.compile(r'<tr>(.*?)</tr>', re.DOTALL | re.MULTILINE)
     ip_pattern = re.compile(r'<td data\-title="IP">\s*(\d+\.\d+\.\d+\.\d+)\s*</td', re.DOTALL)
     port_pattern = re.compile(r'<td data\-title="PORT">\s*(\d+)\s*</td', re.DOTALL)
@@ -59,8 +58,6 @@ async def fetch_proxy_list(queue):
                         continue
                     ports = port_pattern.findall(match)
                     assert len(ips) == len(ports) == 1
-
-                    print('enqueue', ips[0])
 
                     queue.put_nowait((ips[0], ports[0]))
                 await asyncio.sleep(1)
