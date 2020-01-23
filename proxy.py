@@ -43,7 +43,7 @@ async def fetch_proxy_list(queue):
     type_pattern = re.compile(r'<td data\-title="类型">\s*(\w+)\s*</td', re.DOTALL)
     print('....')
 
-    async with aiohttp.ClientSession(headers=__headers__) as sess:
+    async with aiohttp.ClientSession(headers=__headers__, connector=aiohttp.TCPConnector(ssl=False)) as sess:
         print('open sess')
         for url in urls:
             print('loading url', url)
@@ -80,7 +80,8 @@ async def verify_proxy(name, queue):
         timeout = aiohttp.ClientTimeout(total=6)
         async with aiohttp.ClientSession(timeout=timeout) as sess:
             try:
-                async with sess.get('http://34.238.32.178/ip', proxy=proxy) as resp:
+                # httpbin.org
+                async with sess.get('http://34.195.36.213/ip', proxy=proxy) as resp:
                     # print(proxy, resp.status)
                     ret = await resp.json()
                     # print(">>>", ret)

@@ -24,13 +24,11 @@ class Skip(Exception):
 class Retry(Exception):
     pass
 
-WECHAT_UA = "Mozilla/5.0 (Linux; Android 9; TWOPLUS A6010 Build/PKQ1.180716.001; wv) " + \
-    "AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 " + \
-    "MQQBrowser/6.2 TBS/044607 Mobile Safari/537.36 MMWEBID/4820 MicroMessenger/7.0.4.1420(0x27000439) " + \
-    "Process/tools NetType/WIFI Language/ja"
+WECHAT_UA = "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36"
 
 __headers__ = {
     "User-Agent": WECHAT_UA,
+    'Accept': 'text/html',
 }
 
 __dir__ = os.path.dirname(__file__)
@@ -59,62 +57,43 @@ sketchpic_pattern = re.compile(
 )
 
 
-proxy_addrs = ['http://136.228.128.6:59457',
- 'http://218.24.16.198:32621',
- 'http://221.210.120.153:54402',
- 'http://118.181.226.216:58654',
- 'http://119.179.151.220:8060',
- 'http://110.189.152.86:33712',
- 'http://59.37.33.62:50686',
- 'http://136.228.129.36:41838',
- 'http://117.131.99.210:53281',
- 'http://47.104.201.136:53281',
- 'http://61.163.247.10:8118',
- 'http://112.16.172.107:59650',
- 'http://58.22.177.14:9999',
- 'http://47.104.201.136:53281',
- 'http://136.228.128.6:59457',
- 'http://136.228.128.14:61158',
- 'http://121.232.194.75:9000',
- 'http://182.92.233.137:8118',
- 'http://123.132.232.254:61017',
- 'http://219.159.38.207:56210',
- 'http://121.13.252.62:41564',
- 'http://136.228.128.14:61158',
- 'http://115.238.42.211:44919',
- 'http://112.14.47.6:52024',
- 'http://218.75.70.3:8118',
- 'http://222.170.101.98:50204',
- 'http://117.131.99.210:53281',
- 'http://106.15.42.179:33543',
- 'http://111.75.223.9:30646',
- 'http://222.135.92.68:38094',
- 'http://60.217.64.237:63141',
- 'http://117.131.99.210:53281',
- 'http://47.98.183.137:8082',
- 'http://113.12.202.50:50327',
- 'http://117.93.81.127:53281',
- 'http://117.131.99.210:53281',
- 'http://163.204.245.13:9999',
- 'http://60.13.42.72:9999',
- 'http://117.91.232.80:9999',
- 'http://123.206.201.35:8118',
- 'http://163.204.245.252:9999',
- 'http://211.152.33.24:51277',
- 'http://59.37.33.62:50686',
- 'http://47.104.201.136:53281',
- 'http://211.152.33.24:51277',
- 'http://202.104.150.130:58729',
- 'http://111.43.70.58:51547',
- 'http://112.14.47.6:52024',
- 'http://121.40.138.161:8000',
- 'http://139.196.51.201:8118',
- 'http://117.114.149.66:53281',
- 'http://120.78.145.111:80',
- 'http://163.204.242.147:9999',
- 'http://221.6.32.214:41816',
- 'http://49.86.180.162:9999']
+proxy_addrs = ['http://221.1.200.242:43399',
+ 'http://120.234.138.99:53779',
+ 'http://111.72.25.250:9999',
+ 'http://60.2.44.182:47293',
+ 'http://124.93.201.59:42672',
+ 'http://123.149.137.222:9999',
+ 'http://60.212.197.155:8060',
+ 'http://175.44.108.106:9999',
+ 'http://129.204.29.130:8080',
+ 'http://163.204.241.204:9999',
+ 'http://60.167.23.44:9999',
+ 'http://47.112.222.241:8000',
+ 'http://223.199.30.80:9999',
+ 'http://129.204.29.130:8080',
+ 'http://123.163.27.5:9999',
+ 'http://118.24.246.249:80',
+ 'http://218.58.194.162:8060',
+ 'http://183.166.118.149:9999',
+ 'http://120.79.193.230:8000',
+ 'http://118.24.246.249:80',
+ 'http://1.198.73.9:9999',
+ 'http://180.118.128.199:9000',
+ 'http://110.243.31.10:9999',
+ 'http://39.108.86.7:8000',
+ 'http://219.146.127.6:8060',
+ 'http://139.199.219.235:8888',
+ 'http://120.79.193.230:8000',
+ 'http://120.79.193.230:8000',
+ 'http://36.249.48.55:9999',
+ 'http://175.44.108.55:9999',
+ 'http://110.189.152.86:43164']
 
+
+# :)
+__cookies__ = {
+    'JSESSIONID': '3708E838E06CDA41A96B3A9F209A2978',
+}
 
 
 class RiRenMinBao(object):
@@ -131,8 +110,9 @@ class RiRenMinBao(object):
         while True:
             try:
                 async with aiohttp.ClientSession(headers=__headers__) as sess:
-                    async with sess.get(url, proxy=self.proxy, timeout=timeout) as resp:
+                    async with sess.get(url, proxy=self.proxy, timeout=timeout, cookies=__cookies__) as resp:
                         headers = resp.headers
+                        # print(headers)
                         if int(headers['X-PropertyRateLimiting-Remaining-Hour']) < 10 or \
                                 int(headers['X-PropertyRateLimiting-Remaining-Minute']) < 10 or \
                                 int(headers['X-PropertyRateLimiting-Remaining-Day']) < 10:
@@ -140,26 +120,72 @@ class RiRenMinBao(object):
                         html = await resp.text()
                         return resp, resp.headers, html
             except Exception as e:
-                # print(f'request got error: {e} {type(e)}')
+                print(f'request got error: {e} {type(e)}')
                 self.switch_proxy()
 
-    def get_article(self, year, month, day, face, hash):
+    async def get_article(self, year, month, day, face, hash):
         title_pattern = re.compile(r'<div class="title">(.*?)</div>')
         subtitle_pattern = re.compile(r'<div class="subtitle">(.*?)</div>')
         author_pattern = re.compile(r'<div class="author">(.*?)</div>')
-        title_pattern = re.compile(r'<div class="title">(.*?)</div>')
+        # title_pattern = re.compile(r'<div class="title">(.*?)</div>')
         article_info_pattern = re.compile(
             r'<div class="sha_left">.*?【人民日报<span>([\d\-]+)</span>\s+第<span>(\d+)</span>版\s+(<span>(.*?)</span>)?.*?</div>',
-            re.MULTILINE
+            re.MULTILINE | re.DOTALL
         )
         content_pattern = re.compile(
             r'<div id="FontZoom"\s+class="detail_con">\s+(.*?)\s+</div>',
             re.MULTILINE | re.DOTALL
         )
-        test_url = 'http://data.people.com.cn/rmrb/20190430/11/d597efcbc59a4c3b8f005529649e230b'
 
+        url = f'http://data.people.com.cn/rmrb/{year:02d}{month:02d}{day:02d}/{face}/{hash}'
+        # url = 'http://data.people.com.cn/rmrb/20190430/11/d597efcbc59a4c3b8f005529649e230b'
+        resp, _, html = await self.request(url)
+        if resp.url != url:
+            print('url mismatch')
+            raise SystemExit
+        print(html)
+        if '<title>未登录</title>' in html:
+            print('需要登录')
+            raise SystemExit
+        try:
+            title = title_pattern.findall(html)[0]
+            subtitle = (subtitle_pattern.findall(html) + [''])[0]
+            author = (author_pattern.findall(html) + [''])[0]
+            when_, face_, has_type_, type_ = article_info_pattern.findall(html)[0]
+            content = content_pattern.findall(html)[0]
+        except Exception as e:
+            raise e
+        print(title, subtitle, author, when_, type_,  content)
+        data = {
+            'title': title,
+            'subtitle': subtitle,
+            'author': author,
+            'date': when_,
+            'type': type_,
+            'content': content
+        }
+        return data
 
-        return
+    async def run_article_download_loop(self):
+        task = True
+        async with aiohttp.ClientSession(headers=__headers__) as sess:
+            while task:
+                task = await self.queue.get()
+                if not task:
+                    print(f'{self.name} DONE!!')
+                    return
+                year, month, day, face, hash_ = task
+                while True: # error retry loop
+                    try:
+                        data = await self.get_article(year, month, day, face, hash_)
+                        with open(f'data/{year}/{month:02d}/{day:02d}/{face}/{hash_}.json', 'w') as fp:
+                            json.dump(data, fp, ensure_ascii=False)
+                        break
+                    except Retry:
+                        self.switch_proxy()
+                    except Skip:
+                        break
+                self.queue.task_done()
 
     async def get_face_meta(self, year, month, day, face=1):
         url = "http://data.people.com.cn/rmrb/%d%02d%02d/%d" % (year, month, day, face)
@@ -258,6 +284,7 @@ class RiRenMinBao(object):
                     continue
 
 
+
     async def loop(self):
         task = True
         while task:
@@ -275,6 +302,11 @@ class RiRenMinBao(object):
 async def worker(name, queue):
     rmrb = RiRenMinBao(name, queue)
     await rmrb.loop()
+
+async def article_worker(name, queue):
+    rmrb = RiRenMinBao(name, queue)
+    await rmrb.run_article_download_loop()
+
 
 async def main():
     queue = asyncio.Queue()
@@ -302,5 +334,25 @@ async def main():
     await asyncio.gather(*tasks)
 
 
+async def main_download_articles():
+    queue = asyncio.Queue()
+    N = 2
+    tasks = []
+    for i in range(N):
+        task = asyncio.create_task(article_worker(f'article-worker-{i+1}', queue))
+        tasks.append(task)
+
+    day = date.today()
+
+    while day.year >= 2019:
+        path = os.path.join(__dir__, f'data/{day.year}/{day.month:02d}/{day.day:02d}')
+        if os.path.exists(f'{path}/1/meta.json'): # first face
+            with open(f'{path}/meta.json') as fp:
+                meta = json.load(fp)
+                nface = int(meta['nface'])
+
+
+
 if __name__ == '__main__':
     asyncio.run(main())
+    #asyncio.run(main_download_articles())
